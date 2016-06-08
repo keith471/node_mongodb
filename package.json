@@ -1,0 +1,23 @@
+{
+  "name": "mongo",
+  "version": "1.0.0",
+  "description": "For testing mongo db with node",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keith471/node_mongodb.git"
+  },
+  "author": "Keith Strickling",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/keith471/node_mongodb/issues"
+  },
+  "homepage": "https://github.com/keith471/node_mongodb#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "mongodb": "^2.1.21"
+  }
+}
