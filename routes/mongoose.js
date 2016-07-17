@@ -60,6 +60,7 @@ var kittySchema = mongoose.Schema({
           },
           message: '`{VALUE}` is not a valid name!'
       },
+      // `required` validation runs before any custom `validate` functions
       required: [true, 'All kittens need names!']
   },
   age: {
@@ -157,6 +158,53 @@ router.get('/pair', function(req, res) {
             }
             res.send('Saved keith and yoda');
         });
+    });
+});
+
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// Updating //////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
+
+// Test: update without specifying any search parameters to find the document
+// -- are all documents updated?
+// Result: updates the first document in the collection, but none of the others :(
+router.get('/updateAll', function(req, res) {
+    Kitten
+    .update({}, { name: 'Yodsie' })
+    .exec(function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send('success - check documents');
+        }
+    });
+});
+
+// Test: update a nonexistent field
+// Result: success, but does not update document :/
+router.get('/updateBadField', function(req, res) {
+    Kitten
+    .update({}, { color: 'white' })
+    .exec(function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send('success - check documents');
+        }
+    });
+});
+
+// Test: update a nonexistent field and one that does exist
+// Result: success - updates the field that does exist, does nothing with the other field
+router.get('/updateMix', function(req, res) {
+    Kitten
+    .update({}, { color: 'white', name: "YODA" })
+    .exec(function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send('success - check documents');
+        }
     });
 });
 
@@ -424,5 +472,49 @@ name: {
   required: true
 }
 */
+
+/************************** Validation with updates ****************************/
+
+// Test: update a document with fields that don't exist
+// Result: success, but does not update anything :/
+router.get('/updateValBadFields', function(req, res) {
+    Kitten
+    .update({}, { color: 'white' }, { runValidators: true })
+    .exec(function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send("success - check document in db")
+        }
+    });
+});
+
+// Test: valid update
+// Result: success :)
+router.get('/updateValValid', function(req, res) {
+    Kitten
+    .update({}, { age: 3, name: "Mr. Floof" }, { runValidators: true })
+    .exec(function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send("success - check document in db")
+        }
+    });
+});
+
+// Test: invalid update
+// Result: error :)
+router.get('/updateValInvalid', function(req, res) {
+    Kitten
+    .update({}, { name: "" }, { runValidators: true })
+    .exec(function(err) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send("success - check document in db")
+        }
+    });
+});
 
 module.exports = router;
